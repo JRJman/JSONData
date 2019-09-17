@@ -1,0 +1,12 @@
+td img {
+    width: 200px;
+}
+
+.table_head {
+    background-color: grey;
+    padding: 20px;
+}
+
+td {
+    border: 2px solid black;
+}
