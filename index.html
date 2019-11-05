@@ -2,15 +2,28 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Sorteer boeken</title>
-    <meta name="author" content="Joep Jansssen MD2B">
+    <title>Sorteer Boeken</title>
+    <meta name="author" content="Joep Janssen">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="sorteerJSONstijl.css">
 </head>
-<body lang="nl">
-    <h1>Een selectie van boeken</h1>
-    <div id="uitvoer"></div>
-    <script src="sorteerBoeken.js" charset="utf-8"></script>
+<body>
+    <h1>Een selectie boeken</h1>
+    <select id="kenmerk">
+        <option value="titel">titel</option>
+        <option value="auteur">auteur</option>
+        <option value="JSDatum">datum</option>
+        <option value="paginas">paginas</option>
+        <option value="taal">taal</option>
+        <option value="ean">ean</option>
+        <option value="price">price</option>
+        <option value="genre">genre</option>
+    </select>
 
+    <label><input type="radio" name="oplopend" value="1">oplopend</label>
+    <label><input type="radio" name="oplopend" value="-1">aflopend</label>
+
+    <div id="uitvoer"></div>
+    <script src="shopBoeken.js" charset="utf-8" ></script>
 </body>
 </html>

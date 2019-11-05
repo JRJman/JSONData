@@ -1,11 +1,3 @@
-//keuze voorsoteer opties
-let kenmerk = document.getElementById('kenmerk');
-kenmerk.addEventListener('change', (e) => {
-    sorteerBoekObj.kenmerk = e.target.value;
-    sorteerBoekObj.voegJSdatumIn();
-    sorteerBoekObj.sorteren();
-})
-
 //JSON importeren
 let xmlhttp = new XMLHttpRequest();
 xmlhttp.onreadystatechange = function() {
@@ -27,20 +19,6 @@ const maakTabelKop = (arr) => {
     return kop;
 }
 
-const maakTabelRij = (arr, accent) => {
-    let rij = "";
-    if(accent == false){
-        rij = "<tr class='boekSelectie__rij--accent'>"
-    } else {
-        rij = "<tr class='boekSelectie__rij'>"
-    }
-
-    arr.forEach((item) => {
-        rij += "<td class='boekSelectie__data--cel'>" + item + "</td>"
-    });
-    rij += '</tr>';
-    return rij;
-}
 
 // functie die een maand-string een nummer maakt
 // waarbij januari een 0 geeft
@@ -108,41 +86,38 @@ let sorteerBoekObj = {
         this.uitvoeren(this.data);
     },
 
+    //de data in een tabel uitvoeren
     uitvoeren: function(data) {
-        let uitvoer = maakTabelKop(
-            ['titel',
-                'cover',
-                'auteur(s)',
-                'uitgave',
-                'paginas',
-                'taal',
-                'ean',
-                'price',
-                'genre']);
-        for(let i=0; i<this.data.length; i++){
-            let accent = false;
-            i%2 == 1 ? accent = true : accent = false;
-            let imgElement =
-                '<img src="'
-                + this.data[i].cover
-                + '" class="boekSelectie__cover" alt="'
-                + data[i].titel
-                + '" >';
-            let auteurs = maakOpsomming(data[i].auteur);
-            uitvoer += maakTabelRij(
-                [data[i].titel,
-                    auteurs,
-                    imgElement ,
-                    data[i].uitgave,
-                    data[i].paginas,
-                    data[i].taal,
-                    data[i].ean,
-                    data[i].price,
-                    data[i].genre], accent);
-        }
+        data.forEach( boek => {
+            let sectie = document.createElement('sectie');
+            sectie.className = 'boekSelectie';
+            // main element met alle info behalve de prijs en afbeelding
+            let main = document.createElement('main');
+            main.className = 'boekSelectie__main';
 
-        document.getElementById('uitvoer').innerHTML = uitvoer;
+            // cover maken (afbeelding)
+            let afbeelding = document.createElement('img');
+            afbeelding.className = 'boekSelectie__cover';
+            afbeelding.setAttribute('src', boek.cover);
+            afbeelding.setAttribute('alt', boek.titel);
 
+            //titel maken
+            let titel = document.createElement('h3');
+            titel.className = 'boekSelectie__titel';
+            titel.textContent = boek.titel;
+
+            //prijs toevoegen
+            let prijs = document.createElement('div');
+            prijs.className = 'boekSelectie__prijs';
+            prijs.textContent = '€ ' + boek.prijs;
+
+            // de element toevoegen
+            sectie.appendChild(afbeelding);
+            main.appendChild(titel);
+            sectie.appendChild(main);
+            sectie.appendChild(prijs);
+            document.getElementById('uitvoer').appendChild(sectie);
+        })
     }
 }
 
