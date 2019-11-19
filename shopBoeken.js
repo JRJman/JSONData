@@ -1,8 +1,23 @@
+//keuze voorsoteer opties
+let kenmerk = document.getElementById('kenmerk');
+kenmerk.addEventListener('change', (e) => {
+    sorteerBoekObj.kenmerk = e.target.value;
+    sorteerBoekObj.voegJSdatumIn();
+    sorteerBoekObj.sorteren();
+})
+
 //JSON importeren
 let xmlhttp = new XMLHttpRequest();
 xmlhttp.onreadystatechange = function() {
     if(this.readyState == 4 && this.status == 200){
         sorteerBoekObj.data = JSON.parse(this.responseText);
+        sorteerBoekObj.voegJSdatumIn();
+
+        // de data moeten ook een eigenschap hebben waarbij de titels in kapitalen staan
+        // daarop kan dan gesorteerd worden
+        sorteerBoekObj.data.forEach( boek => {
+           boek.titelUpper = boek.titel.toUpperCase();
+        });
         sorteerBoekObj.sorteren();
     }
 };
@@ -62,15 +77,37 @@ const maakOpsomming = (array) => {
     return string;
 }
 
+//maak een functie die de tekst achter de komma vooraan plaatst
+const keerTekstOm = (string) => {
+    if( string.indexOf(',') != -1) {
+        let array = string.split(',');
+        string = array[1] + ' ' + array[0];
+    }
+    return string;
+}
+
+// een winkelwagenobject deze
+// 1. toegevoegde items bevat
+// 2. methode om item te voegen
+// 3. method om items te verwijderen
+let winkelwagen = {
+    items: [],
+    toevoegen: function(el) {
+        this.items.push(el);
+        document.querySelector('.winkelwagen__aantal').innerHTML = this.items.length;
+    }
+
+};
+
 // object dat de boeken uitvoert en sorteert en data bevat
 // eigenschappen: data (sorteer)kenmerk
 // methods: sorteren() en uitvoere()
 let sorteerBoekObj = {
-    data: "",       //komt van xmlhttp.onreadystatechange
+    data: "",       // komt van xmlhttp.onreadystatechange
 
     kenmerk: 'titel',
 
-    //sorteervolgorde en factor
+    //  sorteervolgorde en factor
     oplopend: 1,
 
     // een datumObject toevoegen aan this.data uit de string uitgave
@@ -82,12 +119,13 @@ let sorteerBoekObj = {
 
     //data sorteren
     sorteren: function(){
-        this.data.sort( (a,b) => a[this.kenmerk] > b[this.kenmerk] ? 1*this.oplopend : -1*this.oplopend);
+        this.data.sort( (a,b) => a[this.kenmerk] > b[this.kenmerk] ? 1 * this.oplopend : -1*this.oplopend);
         this.uitvoeren(this.data);
     },
 
     //de data in een tabel uitvoeren
     uitvoeren: function(data) {
+        document.getElementById('uitvoer').innerHTML = "";
         data.forEach( boek => {
             let sectie = document.createElement('sectie');
             sectie.className = 'boekSelectie';
@@ -99,22 +137,46 @@ let sorteerBoekObj = {
             let afbeelding = document.createElement('img');
             afbeelding.className = 'boekSelectie__cover';
             afbeelding.setAttribute('src', boek.cover);
-            afbeelding.setAttribute('alt', boek.titel);
+            afbeelding.setAttribute('alt', keerTekstOm(boek.titel));
 
             //titel maken
             let titel = document.createElement('h3');
             titel.className = 'boekSelectie__titel';
-            titel.textContent = boek.titel;
+            titel.textContent = keerTekstOm(boek.titel);
+
+            //auteurs toevoegen
+            let auteurs = document.createElement('p');
+            auteurs.className = 'boekSelectie__auteurs';
+            //de voor en achternaam van de eerste auteur omdraaien
+            boek.auteur[0] = keerTekstOm(boek.auteur[0]);
+            //auteurs staan in een array: deze omzetten naar Nederlands string
+            auteurs.textContent = maakOpsomming(boek.auteur);
+
+            //overige info toevoegen
+            let overig = document.createElement('p');
+            overig.className = 'boekSelectie__overig';
+            overig.textContent = 'datum: '+boek.uitgave+" | aantal pagina's "+boek.paginas+" | taal: "+boek.taal+" | ean "+boek.ean+" | genre: "+boek.genre;
 
             //prijs toevoegen
             let prijs = document.createElement('div');
             prijs.className = 'boekSelectie__prijs';
-            prijs.textContent = '€ ' + boek.prijs;
+            prijs.textContent = boek.prijs.toLocaleString('nl-NL', {currency: 'EUR', style: 'currency'});
+
+            //knop toevoegen bij de prijs
+            let knop = document.createElement('button');
+            knop.className = 'boekSelectie__knop';
+            knop.innerHTML = "voeg toe aan<br>winkelwagen";
+            knop.addEventListener('click', () => {
+                winkelwagen.toevoegen(boek);
+            });
 
             // de element toevoegen
             sectie.appendChild(afbeelding);
             main.appendChild(titel);
+            main.appendChild(auteurs);
+            main.appendChild(overig);
             sectie.appendChild(main);
+            prijs.appendChild(knop);
             sectie.appendChild(prijs);
             document.getElementById('uitvoer').appendChild(sectie);
         })

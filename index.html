@@ -8,19 +8,20 @@
     <link rel="stylesheet" href="sorteerJSONstijl.css">
 </head>
 <body>
+    <div class="winkelwagen"><span class="winkelwagon__aantal"></span></div>
     <h1>Een selectie boeken</h1>
     <select id="kenmerk">
-        <option value="titel">titel</option>
+        <option value="titelUpper" selected>titel</option>
         <option value="auteur">auteur</option>
         <option value="JSDatum">datum</option>
         <option value="paginas">paginas</option>
         <option value="taal">taal</option>
         <option value="ean">ean</option>
-        <option value="price">price</option>
+        <option value="prijs">prijs</option>
         <option value="genre">genre</option>
     </select>
 
-    <label><input type="radio" name="oplopend" value="1">oplopend</label>
+    <label><input type="radio" name="oplopend" value="1" checked>oplopend</label>
     <label><input type="radio" name="oplopend" value="-1">aflopend</label>
 
     <div id="uitvoer"></div>
