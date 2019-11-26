@@ -8,8 +8,10 @@ body {
     background-size: contain;
     float: right;
     margin-right: 3em;
+    position: relative;
+    cursor: pointer;
 }
-.winkelwagen__antal:not(:empty) {
+.winkelwagen__aantal:not(:empty) {
     background-color: #f00;
     display: inline-block;
     color: #fff;
@@ -81,6 +83,46 @@ body {
 
 .boekSelectie__knop:hover {
     background-color: #900;
+}
+
+/*  bestelpagina    */
+
+.besteldBoek {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    grid-gap: 2em;
+    margin-bottom: .5em;
+}
+
+.besteldBoek__cover {
+    max-width: 50px;
+}
+
+.besteldBoek__titel {
+    font-weight: normal;
+    font-size: 1em;
+}
+
+.besteldBoek__verwijder {
+    width: 2em;
+    height: 2em;
+    background-image: url('img/vuilnisemmer.png');
+    background-size: cover;
+    cursor: pointer;
+    border-radius: .3em;
+    background-color: transparent;
+    transition: background-color 1s ease-out;
+}
+
+.besteldBoek__verwijder:hover {
+    background-color: #f66;
+}
+
+@media screen and (min-width: 40em) {
+    .besteldBoek {
+        max-width: 40em;
+        margin: 0 auto;
+    }
 }
 
 @media screen and (min-width: 60em) {

@@ -1,12 +1,12 @@
-//keuze voorsoteer opties
+// keuze voorsoteer opties
 let kenmerk = document.getElementById('kenmerk');
 kenmerk.addEventListener('change', (e) => {
     sorteerBoekObj.kenmerk = e.target.value;
     sorteerBoekObj.voegJSdatumIn();
     sorteerBoekObj.sorteren();
-})
+});
 
-//JSON importeren
+// JSON importeren
 let xmlhttp = new XMLHttpRequest();
 xmlhttp.onreadystatechange = function() {
     if(this.readyState == 4 && this.status == 200){
@@ -32,7 +32,7 @@ const maakTabelKop = (arr) => {
     });
     kop += '</tr>';
     return kop;
-}
+};
 
 
 // functie die een maand-string een nummer maakt
@@ -58,12 +58,12 @@ const geefMaandNummer = (maand) => {
     return nummer;
 }
 
-//functie die een string van maand naar jaar omzet in een data-object
+// functie die een string van maand naar jaar omzet in een data-object
 const maakJSdatum = (maandJaar) => {
     let mjArray = maandJaar.split(' ');
     let datum = new Date(mjArray[1], geefMaandNummer(mjArray[0]));
     return datum;
-}
+};
 
 const maakOpsomming = (array) => {
     let string = '';
@@ -75,26 +75,49 @@ const maakOpsomming = (array) => {
         }
     }
     return string;
-}
+};
 
-//maak een functie die de tekst achter de komma vooraan plaatst
+// maak een functie die de tekst achter de komma vooraan plaatst
 const keerTekstOm = (string) => {
     if( string.indexOf(',') != -1) {
         let array = string.split(',');
         string = array[1] + ' ' + array[0];
     }
     return string;
-}
+};
 
 // een winkelwagenobject deze
 // 1. toegevoegde items bevat
 // 2. methode om item te voegen
 // 3. method om items te verwijderen
+// 4. method om de winkelwagen aantal bij te werken
 let winkelwagen = {
     items: [],
+
+    haalItemsOp: function() {
+        let bestelling;
+        if( localStorage.getItem('besteldeBoeken') == null || localStorage.getItem('besteldeBoeken') == 'undefined') {
+            bestelling = [];
+        } else {
+            bestelling = JSON.parse(localStorage.getItem('besteldeBoeken'));
+            this.uitvoeren();
+        }
+        return bestelling;
+    },
+
     toevoegen: function(el) {
+        this.items = this.haalItemsOp();
         this.items.push(el);
+        localStorage.setItem('besteldeBoeken', JSON.stringify(this.items));
         document.querySelector('.winkelwagen__aantal').innerHTML = this.items.length;
+    },
+
+    uitvoeren: function () {
+        if(this.items.length > 0){
+            document.querySelector('.winkelwagen__aantal').innerHTML = this.items.length;
+        } else {
+            document.querySelector('.winkelwagen__aantal').innerHTML = "";
+        }
     }
 
 };
@@ -182,6 +205,8 @@ let sorteerBoekObj = {
         })
     }
 }
+
+winkelwagen.haalItemsOp();
 
 kenmerk.addEventListener('kenmerk', (e) => {
     sorteerBoekObj.kenmerk = e.target.value;
