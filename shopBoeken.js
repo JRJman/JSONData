@@ -100,6 +100,9 @@ let winkelwagen = {
             bestelling = [];
         } else {
             bestelling = JSON.parse(localStorage.getItem('besteldeBoeken'));
+            bestelling.forEach( item=> {
+                this.items.push(item);
+            });
             this.uitvoeren();
         }
         return bestelling;
